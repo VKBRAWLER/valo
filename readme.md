@@ -7,3 +7,5 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser => able to use admin credentials
 python manage.py startapp home
+pip install djangorestframework
+python manage.py startapp api
