@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 def index(request):
+    print("hello")
     return HttpResponse("Hello, world. You're at the testproject index.")
 def test(request):
     friends = [
