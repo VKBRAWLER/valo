@@ -1,12 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import logout
 def index(request):
-    print("hello")
-    return HttpResponse("Hello, world. You're at the testproject index.")
-def test(request):
-    friends = [
-        'John',
-        'Jane',
-        'Jack'
-    ]
-    return JsonResponse(friends, safe=False)
+    return render(request, 'index.html')
+def logout_user(request):
+    logout(request)
+    return redirect ('/login')
