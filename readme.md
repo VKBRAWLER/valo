@@ -11,3 +11,4 @@ pip install djangorestframework
 python manage.py startapp api
 pip install mysqlclient
 python manage.py startapp members
+pip install pyJWT

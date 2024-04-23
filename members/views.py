@@ -4,6 +4,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.csrf import csrf_exempt
+import jwt, datetime
+from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
 
 @csrf_exempt
 def login_user(request):
@@ -12,12 +15,25 @@ def login_user(request):
         password = request.POST.get('password')
         print(username, password)
         user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return JsonResponse({'status': 'success'})
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Invalid username or password.'})
-    return render(request, 'login.html')
+        if user is None:
+            raise AuthenticationFailed('Invalid credentials, try again')
+        payload = {
+            'id': user.id,
+            'exp': datetime.datetime.now() + datetime.timedelta(days=1),
+            'iat': datetime.datetime.now()
+        }
+        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        login(request, user)
+        return JsonResponse({
+            'status': 'success',
+            'jwt': token,
+            })
+    response = Response()
+    response.set_cookie(key='jwt', value=token, httponly=True)
+    response.data = {
+        'jwt': token,
+    }
+    return Response({'status': 'success'})
 def register_user(request):
     if request.method == "POST":
         print(request.POST)
