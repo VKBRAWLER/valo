@@ -1,19 +1,22 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def login_user(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        print(username, password)
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('/api/v1/')
+            return JsonResponse({'status': 'success'})
         else:
-            messages.error(request, 'Invalid username or password.')
-            redirect('/')
+            return JsonResponse({'status': 'error', 'message': 'Invalid username or password.'})
     return render(request, 'login.html')
 def register_user(request):
     if request.method == "POST":
